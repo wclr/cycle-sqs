@@ -34,13 +34,7 @@ export const makeSQSDriver = (config) => {
     if (typeof sqs[method] !== 'function'){
       throw (new Error(`Illegal SQS method ${method}`))
     }
-    return O.create(observer => {
-      sqs[method](params, (err, result) => {
-        err
-          ? observer.onError(err)
-          : observer.onNext(result)
-      })
-    })
+    return O.fromNodeCallback(sqs[method], sqs)(params)
   }
   
   return function sqsDriver(request$) {
