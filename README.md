@@ -72,5 +72,5 @@ For running test in dev mode with watching `node-dev` should be installed global
 
 
 ### Good resources on SQS:
-https://www.youtube.com/watch?v=4Z74luiE2bg
-https://www.youtube.com/watch?v=rxnuioFAxa
+* https://www.youtube.com/watch?v=4Z74luiE2bg
+* https://www.youtube.com/watch?v=rxnuioFAxa
