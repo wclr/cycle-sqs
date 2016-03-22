@@ -13,7 +13,8 @@
   "author": "whitecolor",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.2.43"
+    "aws-sdk": "^2.2.43",
+    "cycle-async-driver": "^1.0.0"
   },
   "devDependencies": {
     "@cycle/core": "^6.0.0",

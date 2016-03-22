@@ -1,5 +1,5 @@
 import {run} from '@cycle/core'
-import {makeSQSDriver} from '../src/index'
+import {makeSQSDriver} from '../lib/index'
 import {Observable as O} from 'rx'
 import isolate from '@cycle/isolate'
 import test from 'tape'

@@ -1,27 +1,10 @@
 import {Observable as O} from 'rx'
 import aws from 'aws-sdk'
-
-const isolateSink = (request$, scope) => {
-  return request$.map((request) => {
-    request._namespace = request._namespace || []
-    request._namespace.push(scope)
-    return request
-  })
-}
-
-const isolateSource = (response$$, scope) => {
-  var isolated$$ = response$$.filter((res$) => {
-    return Array.isArray(res$.request._namespace)
-      && res$.request._namespace.indexOf(scope) !== -1
-  });
-  isolated$$.isolateSource = isolateSource;
-  isolated$$.isolateSink = isolateSink;
-  return isolated$$;
-}
+import {createDriver} from 'cycle-async-driver'
 
 export const makeSQSDriver = (config) => {
   var sqs = new aws.SQS(config);
-  var eager = true
+
   const createResponse$ = (request) => {
     var method = request.method
     var params = request.params
@@ -36,24 +19,10 @@ export const makeSQSDriver = (config) => {
     }
     return O.fromNodeCallback(sqs[method], sqs)(params)
   }
-  
-  return function sqsDriver(request$) {
-    let response$$ = request$
-      .map(request => {
-        let response$ = createResponse$(request)
-        let doEager = request.eager !== undefined ? request.eager : eager
-        if (doEager) {
-          response$ = response$.replay(null, 1)
-          response$.connect()
-        }
-        response$.request = request
-        return response$
-      })
-      .replay(null, 1)
 
-    response$$.connect()
-    response$$.isolateSource = isolateSource
-    response$$.isolateSink = isolateSink
+  return function sqsDriver(request$) {
+    let response$$ = createDriver(createResponse$)(request$)
+
     response$$.poll = (params) => {
       return O.create(observer => {
         let stopped = false
